@@ -1,0 +1,24 @@
+#playbook for automatic installing and configuring samba of the file-server
+#notice that server must allow 445/tcp traffic
+---
+- hosts: all1
+  become: yes
+  tasks:
+  - name: Install git
+    apt: pkg=git state=present
+  - name: clone repo with script
+    git:
+      repo: 'https://github.com/SkiffaxGankovYaroslav/devops-automation.git'
+      dest: "/install_samba"
+  - name: set file rights
+    file:
+      path: "/install_samba/scripts/install_samba_and_configure.sh"
+      mode: 0755
+
+  - name: start script
+    shell: "/install_samba/scripts/install_samba_and_configure.sh"
+
+  - name: delete local git repo
+    file:
+      path: "/install_samba"
+      state: absent
